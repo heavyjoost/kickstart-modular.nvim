@@ -175,9 +175,9 @@ require('lazy').setup({
         'nvim-telescope/telescope-fzf-native.nvim',
         -- NOTE: If you are having trouble with this installation,
         --       refer to the README for telescope-fzf-native for more instructions.
-        build = 'make',
+        build = 'gmake',
         cond = function()
-          return vim.fn.executable 'make' == 1
+          return vim.fn.executable 'gmake' == 1
         end,
       },
     },
