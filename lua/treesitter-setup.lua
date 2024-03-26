@@ -50,6 +50,7 @@ vim.defer_fn(function()
       'ssh_config',
       'templ',
       'tmux',
+      'toml',
       'tsv',
       'vim',
       'vimdoc',
