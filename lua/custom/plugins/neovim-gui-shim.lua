@@ -1,4 +1,4 @@
 -- Shim for nvim-qt
 return {
-  "equalsraf/neovim-gui-shim",
+  'equalsraf/neovim-gui-shim',
 }

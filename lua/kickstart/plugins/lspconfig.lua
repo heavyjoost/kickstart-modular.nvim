@@ -8,7 +8,7 @@ dependencies = {
   { 'folke/neodev.nvim', opts = {} },
 }
 
-if jit.os ~= "BSD" then
+if jit.os ~= 'BSD' then
   -- Automatically install LSPs and related tools to stdpath for Neovim
   table.insert(dependencies, 'williamboman/mason.nvim')
   table.insert(dependencies, 'williamboman/mason-lspconfig.nvim')
@@ -154,7 +154,7 @@ return {
         --
       }
 
-      if jit.os ~= "BSD" then
+      if jit.os ~= 'BSD' then
         servers.lua_ls = {
           -- cmd = {...},
           -- filetypes = { ...},
@@ -177,7 +177,7 @@ return {
       --    :Mason
       --
       --  You can press `g?` for help in this menu.
-      if jit.os ~= "BSD" then
+      if jit.os ~= 'BSD' then
         require('mason').setup()
 
         -- You can add other tools here that you want Mason to install

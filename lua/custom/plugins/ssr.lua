@@ -1,4 +1,4 @@
 -- Structural Search and Replace
 return {
-  "cshuaimin/ssr.nvim",
+  'cshuaimin/ssr.nvim',
 }

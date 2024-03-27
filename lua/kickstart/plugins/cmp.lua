@@ -40,8 +40,8 @@ return {
       local cmp = require 'cmp'
       local luasnip = require 'luasnip'
       luasnip.config.setup {}
-      
-      vim.api.nvim_set_hl(0, "CmpGhostText", { link = "Comment", default = true })
+
+      vim.api.nvim_set_hl(0, 'CmpGhostText', { link = 'Comment', default = true })
 
       cmp.setup {
         snippet = {
@@ -109,7 +109,7 @@ return {
         },
         experimental = {
           ghost_text = {
-            hl_group = "CmpGhostText",
+            hl_group = 'CmpGhostText',
           },
         },
       }

@@ -3,20 +3,20 @@ return {
   {
     'ellisonleao/gruvbox.nvim',
     config = function()
-      require("gruvbox").setup({
-        contrast = "hard",
+      require('gruvbox').setup {
+        contrast = 'hard',
         palette_overrides = {
-          dark0_hard = "#000000",
+          dark0_hard = '#000000',
         },
         overrides = {
           TelescopeSelection = {
             -- link = "GruvboxOrangeBold",
-            fg = "#fe8019",
+            fg = '#fe8019',
             bold = true,
-            bg = "#332e2a",
+            bg = '#332e2a',
           },
         },
-      })
+      }
       vim.cmd.colorscheme 'gruvbox'
     end,
   },

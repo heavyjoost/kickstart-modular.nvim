@@ -1,8 +1,8 @@
 return {
-  "folke/flash.nvim",
+  'folke/flash.nvim',
   -- TODO: this needs different keys
   enabled = false,
-  event = "VeryLazy",
+  event = 'VeryLazy',
   ---@type Flash.Config
   opts = {},
   -- stylua: ignore
