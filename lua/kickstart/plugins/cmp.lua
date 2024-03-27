@@ -40,6 +40,8 @@ return {
       local cmp = require 'cmp'
       local luasnip = require 'luasnip'
       luasnip.config.setup {}
+      
+      vim.api.nvim_set_hl(0, "CmpGhostText", { link = "Comment", default = true })
 
       cmp.setup {
         snippet = {
@@ -67,6 +69,11 @@ return {
           --  This will auto-import if your LSP supports it.
           --  This will expand snippets if the LSP sent a snippet.
           ['<C-y>'] = cmp.mapping.confirm { select = true },
+          ['<CR>'] = cmp.mapping.confirm { select = true },
+          ['<C-CR>'] = function(fallback)
+            cmp.abort()
+            fallback()
+          end,
 
           -- Manually trigger a completion from nvim-cmp.
           --  Generally you don't need this, because nvim-cmp will display
@@ -99,6 +106,11 @@ return {
           { name = 'nvim_lsp' },
           { name = 'luasnip' },
           { name = 'path' },
+        },
+        experimental = {
+          ghost_text = {
+            hl_group = "CmpGhostText",
+          },
         },
       }
     end,
