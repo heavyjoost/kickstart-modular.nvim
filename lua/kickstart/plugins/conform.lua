@@ -24,7 +24,7 @@ return {
           return nil
         else
           return {
-            timeout_ms = 500,
+            timeout_ms = 4000,
             lsp_format = 'fallback',
           }
         end
@@ -36,6 +36,9 @@ return {
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
         -- javascript = { "prettierd", "prettier", stop_after_first = true },
+        json = { 'prettierd', 'prettier', stop_after_first = true },
+        go = { 'gofmt' },
+        -- sh = { 'shfmt' },
       },
     },
   },

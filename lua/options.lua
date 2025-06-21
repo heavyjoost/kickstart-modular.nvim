@@ -55,7 +55,7 @@ vim.o.splitbelow = true
 --   See `:help lua-options`
 --   and `:help lua-options-guide`
 vim.o.list = true
-vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
+vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣', space = '·' }
 
 -- Preview substitutions live, as you type!
 vim.o.inccommand = 'split'
@@ -70,5 +70,28 @@ vim.o.scrolloff = 10
 -- instead raise a dialog asking if you wish to save the current file(s)
 -- See `:help 'confirm'`
 vim.o.confirm = true
+
+-- Set virtual terminal title
+vim.o.title = true
+vim.o.titlelen = 0
+
+-- Command completion that's kinda sorta like the terminal
+vim.o.wildmode = 'longest:full,full'
+-- vim.opt.wildoptions += fuzzy
+
+-- Default tab size
+vim.o.tabstop = 4
+vim.o.shiftwidth = 4
+
+-- Default font for neovide/other(nvim-qt)
+if vim.g.neovide then
+  -- Font specified in Neovide config so it can use -calt feature
+  vim.g.neovide_position_animation_length = 0
+  vim.g.neovide_scroll_animation_length = 0
+  vim.g.neovide_cursor_animation_length = 0
+  vim.g.neovide_cursor_trail_size = 0
+else
+  vim.o.guifont = 'Hack Nerd Font:h9'
+end
 
 -- vim: ts=2 sts=2 sw=2 et

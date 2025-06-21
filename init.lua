@@ -1,3 +1,9 @@
+-- FIXME: % can go to the wrong match if this happens to be a string inside the block for example
+-- FIXME: same for highlighting of brackets. Looks like setting/expanding treesitter additional_vim_regex_highlighting fixes it?
+-- FIXME: Alternatively use https://github.com/theHamsta/nvim-treesitter-pairs ?
+-- FIXME: Or use https://github.com/andymass/vim-matchup/ ?
+--
+-- TODO: might be cool to add mini-bracketed and mini-bufremove (which saves window layout)
 --[[
 
 =====================================================================
@@ -91,7 +97,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 require 'options'

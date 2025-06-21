@@ -4,6 +4,12 @@
 -- you do for a plugin at the top level, you can do for a dependency.
 --
 -- Use the `dependencies` key to specify the dependencies of a particular plugin
+local make_cmd
+if jit.os ~= 'BSD' then
+  make_cmd = 'make'
+else
+  make_cmd = 'gmake'
+end
 
 return {
   { -- Fuzzy Finder (files, lsp, etc)
@@ -16,12 +22,12 @@ return {
 
         -- `build` is used to run some command when the plugin is installed/updated.
         -- This is only run then, not every time Neovim starts up.
-        build = 'make',
+        build = make_cmd,
 
         -- `cond` is a condition used to determine whether this plugin should be
         -- installed and loaded.
         cond = function()
-          return vim.fn.executable 'make' == 1
+          return vim.fn.executable(make_cmd) == 1
         end,
       },
       { 'nvim-telescope/telescope-ui-select.nvim' },
@@ -55,11 +61,17 @@ return {
         -- You can put your default mappings / updates / etc. in here
         --  All the info you're looking for is in `:help telescope.setup()`
         --
-        -- defaults = {
-        --   mappings = {
-        --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
-        --   },
-        -- },
+        defaults = {
+          mappings = {
+            --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
+            i = {
+              ['<M-p>'] = require('telescope.actions.layout').toggle_preview,
+            },
+          },
+          preview = {
+            hide_on_startup = false,
+          },
+        },
         -- pickers = {}
         extensions = {
           ['ui-select'] = {

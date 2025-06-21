@@ -1,4 +1,21 @@
 -- LSP Plugins
+local dependencies = {
+  -- Useful status updates for LSP.
+  { 'j-hui/fidget.nvim', opts = {} },
+
+  -- Allows extra capabilities provided by blink.cmp
+  'saghen/blink.cmp',
+}
+
+if jit.os ~= 'BSD' then
+  -- Automatically install LSPs and related tools to stdpath for Neovim
+  -- Mason must be loaded before its dependents so we need to set it up here.
+  -- NOTE: `opts = {}` is the same as calling `require('mason').setup({})`
+  table.insert(dependencies, { 'mason-org/mason.nvim', opts = {} })
+  table.insert(dependencies, 'mason-org/mason-lspconfig.nvim')
+  table.insert(dependencies, 'WhoIsSethDaniel/mason-tool-installer.nvim')
+end
+
 return {
   {
     -- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
@@ -15,20 +32,7 @@ return {
   {
     -- Main LSP Configuration
     'neovim/nvim-lspconfig',
-    dependencies = {
-      -- Automatically install LSPs and related tools to stdpath for Neovim
-      -- Mason must be loaded before its dependents so we need to set it up here.
-      -- NOTE: `opts = {}` is the same as calling `require('mason').setup({})`
-      { 'mason-org/mason.nvim', opts = {} },
-      'mason-org/mason-lspconfig.nvim',
-      'WhoIsSethDaniel/mason-tool-installer.nvim',
-
-      -- Useful status updates for LSP.
-      { 'j-hui/fidget.nvim', opts = {} },
-
-      -- Allows extra capabilities provided by blink.cmp
-      'saghen/blink.cmp',
-    },
+    dependencies = dependencies,
     config = function()
       -- Brief aside: **What is LSP?**
       --
@@ -198,6 +202,13 @@ return {
       --  So, we create new capabilities with blink.cmp, and then broadcast that to the servers.
       local capabilities = require('blink.cmp').get_lsp_capabilities()
 
+      vim.filetype.add {
+        pattern = {
+          ['.*/docker%-compose%.yml'] = 'yaml.docker-compose',
+          ['.*/docker%-compose%.[^%.]+%.yml'] = 'yaml.docker-compose',
+        },
+      }
+
       -- Enable the following language servers
       --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
       --
@@ -209,9 +220,27 @@ return {
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
         -- clangd = {},
-        -- gopls = {},
+        gopls = {
+          gopls = {
+            ['ui.inlayhint.hints'] = {
+              assignVariableTypes = true,
+              compositeLiteralFields = true,
+              compositeLiteralTypes = true,
+              constantValues = true,
+              functionTypeParameters = true,
+              parameterNames = true,
+              rangeVariableTypes = true,
+            },
+          },
+        },
         -- pyright = {},
-        -- rust_analyzer = {},
+        rust_analyzer = {},
+        zls = {},
+        basedpyright = {},
+        ruff = {},
+        yamlls = {},
+        perlnavigator = {},
+        bashls = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
@@ -220,8 +249,10 @@ return {
         -- But for many setups, the LSP (`ts_ls`) will work just fine
         -- ts_ls = {},
         --
+      }
 
-        lua_ls = {
+      if jit.os ~= 'BSD' then
+        servers.lua_ls = {
           -- cmd = { ... },
           -- filetypes = { ... },
           -- capabilities = {},
@@ -234,8 +265,8 @@ return {
               -- diagnostics = { disable = { 'missing-fields' } },
             },
           },
-        },
-      }
+        }
+      end
 
       -- Ensure the servers and tools above are installed
       --
@@ -250,26 +281,41 @@ return {
       --
       -- You can add other tools here that you want Mason to install
       -- for you, so that they are available from within Neovim.
-      local ensure_installed = vim.tbl_keys(servers or {})
-      vim.list_extend(ensure_installed, {
-        'stylua', -- Used to format Lua code
-      })
-      require('mason-tool-installer').setup { ensure_installed = ensure_installed }
+      if jit.os ~= 'BSD' then
+        local ensure_installed = vim.tbl_keys(servers or {})
+        vim.list_extend(ensure_installed, {
+          'stylua', -- Used to format Lua code
+          'shfmt',
+          'shellcheck',
+        })
+        require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
-      require('mason-lspconfig').setup {
-        ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
-        automatic_installation = false,
-        handlers = {
-          function(server_name)
-            local server = servers[server_name] or {}
-            -- This handles overriding only values explicitly passed
-            -- by the server configuration above. Useful when disabling
-            -- certain features of an LSP (for example, turning off formatting for ts_ls)
-            server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
-            require('lspconfig')[server_name].setup(server)
-          end,
-        },
-      }
+        require('mason-lspconfig').setup {
+          ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
+          automatic_installation = false,
+          handlers = {
+            function(server_name)
+              local server = servers[server_name] or {}
+              -- This handles overriding only values explicitly passed
+              -- by the server configuration above. Useful when disabling
+              -- certain features of an LSP (for example, turning off formatting for ts_ls)
+              server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
+              require('lspconfig')[server_name].setup(server)
+            end,
+          },
+        }
+      else
+        -- Mason doesn't work very well on *BSD, so rely on manually installed junk
+        -- TODO: double check this 'cause the rewrite seems to do things differently
+        for server_name, settings in pairs(servers) do
+          require('lspconfig')[server_name].setup {
+            capabilities = capabilities,
+            on_attach = on_attach,
+            settings = servers[server_name],
+            filetypes = (servers[server_name] or {}).filetypes,
+          }
+        end
+      end
     end,
   },
 }
